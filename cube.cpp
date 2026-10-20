@@ -164,17 +164,33 @@ struct CUBE{
     }
 };
 
-struct cubehasher{
-    size_t operator()(const CUBE& p) const{
-        size_t sum = 0;
+// All possible states given constraints : 7! * 3^6
+static const int NB_STATES = 5040 * 729;
 
-        for (int i = 0; i < 8; ++i){
-            // on fait un truc correct mais qui parait vraiment bizare
-            // (on multiplie le running par 1 de plus que ce qu'on rajouter au max)
-            // (ca revient juste à faire une base 24 je crois)
-            sum = sum * 24 + p.reprensentation[i] * 3 + p.orientation[i];
+// The 7 slots that can move (4 is fixed) (for the hash)
+static const array<int,7> MOVING_SLOTS = {0,1,2,3,5,6,7};
+
+int cube_index(const CUBE& p){
+    // La magie d'internet pour un hash injectif petit de tout les états
+
+    int perm = 0;
+
+    for (int i = 0; i < 7; ++i){
+        int smaller = 0;
+        for (int j = i + 1; j < 7; ++j){
+            if (p.reprensentation[MOVING_SLOTS[j]] < p.reprensentation[MOVING_SLOTS[i]]){
+                smaller++;
+            }
         }
-
-        return sum;
+        perm = perm * (7 - i) + smaller;
     }
-};
+
+    // Les "twist" de 6 cubes des 7 qui bougents (le 7eme est donc fixé)
+    int twist = 0;
+    for (int i = 0; i < 6; ++i){
+        // Ca c'est classique ca va
+        twist = twist * 3 + p.orientation[MOVING_SLOTS[i]];
+    }
+
+    return perm * 729 + twist;
+}
