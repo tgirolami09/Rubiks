@@ -2,40 +2,16 @@
 #include "cube.cpp"
 #include <unordered_map>
 #include <queue>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
 int main(){
+    // To check we are done (since init is solved)
     CUBE cubeEnd;
-    cubeEnd.turn_back_clock();
-    cubeEnd.print_square();
-    cubeEnd.turn_back_counter();
+
     CUBE cube;
-
-    // Init
-    //cube.print_square();
-
-    // Test back switching
-    // cube.turn_back_clock();
-    // cube.print_square();
-
-    // cube.turn_back_counter();
-    // cube.print_square();
-
-    // Test right switching
-    // cube.turn_right_clock();
-    // cube.print_square();
-
-    // cube.turn_right_counter();
-    // cube.print_square();
-
-    // Test bottom switching
-    // cube.turn_bottom_clock();
-    // cube.print_square();
-
-    // cube.turn_bottom_counter();
-    // cube.print_square();
-
     cube.read_from_input();
     cube.print_square();
 
@@ -66,7 +42,7 @@ int main(){
             q.push(current);
             disti[current] = disti[top]+1;
             parent[current] = top;
-            move[current] = 'B';
+            move[current] = 'b';
         }
 
         current.turn_back_counter();
@@ -77,7 +53,7 @@ int main(){
             q.push(current);
             disti[current] = disti[top]+1;
             parent[current] = top;
-            move[current] = 'F';
+            move[current] = 'B';
         }
 
         current.turn_back_clock();
@@ -100,7 +76,7 @@ int main(){
             q.push(current);
             disti[current] = disti[top]+1;
             parent[current] = top;
-            move[current] = 'L';
+            move[current] = 'r';
         }
 
         current.turn_right_clock();
@@ -112,7 +88,7 @@ int main(){
             q.push(current);
             disti[current] = disti[top]+1;
             parent[current] = top;
-            move[current] = 'B';
+            move[current] = 'd';
         }
 
         current.turn_bottom_counter();
@@ -123,19 +99,24 @@ int main(){
             q.push(current);
             disti[current] = disti[top]+1;
             parent[current] = top;
-            move[current] = 'T';
+            move[current] = 'D';
         }
 
         current.turn_bottom_clock();
     }
 
+    string solution;
     CUBE final = cubeEnd;
     final.print_square();
+
     while (parent.find(final) != parent.end()){
+        printf("%c\n",move[final]);
+        solution += move[final];
         final = parent[final];
         final.print_square();
-        printf("%c\n",move[final]);
     }
 
+    reverse(solution.begin(), solution.end());
+    printf("Solution: %s\n", solution.c_str());
 
 }
